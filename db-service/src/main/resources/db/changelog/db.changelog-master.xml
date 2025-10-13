@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="0000_create_functions" author="cvoiculescu" runOnChange="true">
+        <validCheckSum>ANY</validCheckSum>
+        <sqlFile path="../functions/create_sequence.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="0000_create_tables" author="cvoiculescu">
+        <sqlFile path="../tables/000_init_tables.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet id="0001_insert_initial_data" author="cvoiculescu">
+        <sqlFile path="../data/000_insert_init_data.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+</databaseChangeLog>

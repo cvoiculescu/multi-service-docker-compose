@@ -13,47 +13,80 @@ services:
     image: nginx:stable-alpine
     container_name: nginx
     depends_on:
-      - service1
-      - service2
+      user-service:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      - default
+      - ./configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
 
   postgres:
     image: postgres:16.2
     container_name: postgres
     env_file:
-      - env/postgres.env
+      - ./configs/db/env/postgres.env
     ports:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  service1:
-    build: ./service1
-    container_name: service1
+  db-service:
+    build: ./db-service
+    container_name: db-service
     env_file:
-      - env/db.env
+      - ./configs/db/env/service_spring_datasource.env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    env_file:
+      - ./configs/db/env/service_spring_datasource.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      db-service:
+        condition: service_completed_successfully
     ports:
       - "8081:8080"
       - "5005:5005"
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-  service2:
-    build: ./service2
-    container_name: service2
+  product-service:
+    build: ./product-service
+    container_name: product-service
     env_file:
-      - env/db.env
+      - ./configs/db/env/service_spring_datasource.env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      db-service:
+        condition: service_completed_successfully
     ports:
       - "8082:8080"
       - "5006:5005"
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   db_data:
-
