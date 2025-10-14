@@ -2,10 +2,10 @@
 
 for dir in */ ; do
   if [ -d "$dir" ] && [ -f "${dir}pom.xml" ]; then
-    echo "Compiling Maven project in: $dir"
+    echo "Compiling Maven project in: ${dir%/*}"
     (cd "$dir" && mvn clean package -DskipTests)
   else
-    echo "Skipping: $dir (not a Maven project)"
+    echo "Skipping: ${dir%/*} (not a Maven project)"
   fi
 done
 
