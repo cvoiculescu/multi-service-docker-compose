@@ -6,7 +6,6 @@ services:
     environment:
       DOZZLE_ENABLE_ACTIONS: true
       DOZZLE_ENABLE_SHELL: true
-      DOZZLE_FILTER: label=color
     ports:
       - "8080:8080"   # Port 8080 exposed for UI access
     volumes:
