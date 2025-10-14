@@ -3,11 +3,21 @@ services:
   dozzle:
     image: amir20/dozzle:latest
     container_name: dozzle
+    environment:
+      DOZZLE_ENABLE_ACTIONS: true
+      DOZZLE_ENABLE_SHELL: true
+      DOZZLE_FILTER: label=color
     ports:
       - "8080:8080"   # Port 8080 exposed for UI access
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "/dozzle", "healthcheck" ]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
   nginx:
     image: nginx:stable-alpine
