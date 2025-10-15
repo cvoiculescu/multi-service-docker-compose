@@ -36,7 +36,7 @@ services:
     image: postgres:16.2
     container_name: postgres
     env_file:
-      - ./configs/db/env/postgres.env
+      - ./configs/env/postgres.env
     ports:
       - "5432:5432"
     volumes:
@@ -52,7 +52,7 @@ services:
     build: ./db-service
     container_name: db-service
     env_file:
-      - ./configs/db/env/service_spring_datasource.env
+      - ./configs/env/services/db-service.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -61,15 +61,15 @@ services:
     build: ./user-service
     container_name: user-service
     env_file:
-      - ./configs/db/env/service_spring_datasource.env
+      - ./configs/env/services/user-service.env
     depends_on:
       postgres:
         condition: service_healthy
       db-service:
         condition: service_completed_successfully
     ports:
-      - "8081:8080"
-      - "5005:5005"
+      - "${USER_SERVICE_APP_PORT:-8081}:8080"
+      - "${USER_SERVICE_DEBUG_PORT:-5005}:5005"
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
@@ -81,15 +81,15 @@ services:
     build: ./product-service
     container_name: product-service
     env_file:
-      - ./configs/db/env/service_spring_datasource.env
+      - ./configs/env/services/product-service.env
     depends_on:
       postgres:
         condition: service_healthy
       db-service:
         condition: service_completed_successfully
     ports:
-      - "8082:8080"
-      - "5006:5005"
+      - "${PRODUCT_SERVICE_APP_PORT:-8082}:8080"
+      - "${PRODUCT_SERVICE_DEBUG_PORT:-5006}:5005"
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
