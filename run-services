@@ -1,13 +1,3 @@
 #!/bin/bash
-
-for dir in */ ; do
-  if [ -d "$dir" ] && [ -f "${dir}pom.xml" ]; then
-    echo "Compiling Maven project in: ${dir%/*}"
-    (cd "$dir" && mvn clean package -DskipTests)
-  else
-    echo "Skipping: ${dir%/*} (not a Maven project)"
-  fi
-done
-
 docker compose build --no-cache
 docker compose up --force-recreate --build -d
