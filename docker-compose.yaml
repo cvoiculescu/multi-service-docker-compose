@@ -3,11 +3,10 @@ services:
   dozzle:
     image: amir20/dozzle:latest
     container_name: dozzle
-    environment:
-      DOZZLE_ENABLE_ACTIONS: true
-      DOZZLE_ENABLE_SHELL: true
+    env_file:
+      - ./configs/env/services/dozzle.env
     ports:
-      - "8080:8080"   # Port 8080 exposed for UI access
+      - "${DOZZLE_APP_PORT:-8080}:8080"   # Port 8080 exposed for UI access
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
