@@ -1,12 +1,13 @@
+ARG JAVA_IMAGE=maven:3.9.11-eclipse-temurin-25-noble
 # ---- Build Stage ----
-FROM maven:3.9.11-eclipse-temurin-21-noble AS builder
+FROM ${JAVA_IMAGE} AS builder
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
 # ---- Runtime Stage ----
-FROM eclipse-temurin:21.0.8_9-jre-noble
+FROM ${JAVA_IMAGE}
 WORKDIR /app
 COPY --from=builder /app/target/*.jar ./app.jar
 EXPOSE 8080 5005
