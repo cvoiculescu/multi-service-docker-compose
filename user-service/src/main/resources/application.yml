@@ -10,3 +10,8 @@ spring:
       ddl-auto: validate
   application:
     name: user-service
+
+feign:
+  client:
+    product-service:
+      url: ${PRODUCT_SERVICE_URL:http://product-service:8080}
