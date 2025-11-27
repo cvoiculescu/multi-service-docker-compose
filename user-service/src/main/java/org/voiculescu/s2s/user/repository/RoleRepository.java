@@ -2,11 +2,11 @@ package org.voiculescu.s2s.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.voiculescu.s2s.user.repository.entity.User;
+import org.voiculescu.s2s.user.repository.entity.Role;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    User findByUsername(String username);
+    Role findByName(String name);
 
 }
